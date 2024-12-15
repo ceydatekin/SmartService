@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: smart-service-config
+data:
+  db_host: "postgres"
+  db_port: "5432"
+  db_name: "smartdb"
+  grpc_port: "50051"
+  log_level: "INFO"

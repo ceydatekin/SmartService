@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: smart-service
+Version: 0.1
+Requires-Dist: grpcio
+Requires-Dist: grpcio-tools
+Requires-Dist: sqlalchemy
+Requires-Dist: psycopg2-binary
+Requires-Dist: python-dotenv

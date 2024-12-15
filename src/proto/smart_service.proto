@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package smart_service;
+
+// Smart Model tanımı
+message SmartModel {
+    string id = 1;
+    string name = 2;
+    string type = 3;        // DEVICE veya SERVICE
+    string category = 4;    // camera, weather, movie vs.
+    string description = 5;
+}
+
+// Smart Feature tanımı
+message SmartFeature {
+    string id = 1;
+    string model_id = 2;
+    string name = 3;
+    string description = 4;
+    string function_type = 5;
+}
+
+// İstek ve yanıt mesajları
+message CreateModelRequest {
+    SmartModel model = 1;
+}
+
+message GetModelRequest {
+    string id = 1;
+}
+
+message ListModelsRequest {
+    string type = 1;
+    string category = 2;
+}
+
+message ListModelsResponse {
+    repeated SmartModel models = 1;
+}
+
+message UpdateModelRequest {
+    string id = 1;
+    string name = 2;
+    string type = 3;
+    string category = 4;
+    string description = 5;
+}
+
+message DeleteModelRequest {
+    string id = 1;
+}
+
+// Ana servis tanımı
+service SmartService {
+    rpc CreateModel (CreateModelRequest) returns (SmartModel);
+    rpc GetModel (GetModelRequest) returns (SmartModel);
+    rpc UpdateModel (UpdateModelRequest) returns (SmartModel);
+    rpc DeleteModel (DeleteModelRequest) returns (SmartModel);
+    rpc ListModels (ListModelsRequest) returns (ListModelsResponse);
+}
