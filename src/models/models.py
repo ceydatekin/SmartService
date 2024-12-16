@@ -1,30 +1,23 @@
 from sqlalchemy import Column, String, JSON, DateTime, Text, ForeignKey, Enum, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-import enum
 from datetime import datetime
 import uuid
+from enum import Enum as PyEnum
 
 Base = declarative_base()
 
 
-class ModelCategory(enum.Enum):
-    WEARABLE = "wearable"
-    SURVEILLANCE = "surveillance"
-    ENVIRONMENTAL = "environmental"
-    ENTERTAINMENT = "entertainment"
-    HEALTH = "health"
-    WEATHER = "weather"
-    CUSTOM = "custom"
+class ModelType(PyEnum):
+    DEVICE = "DEVICE"
+    SERVICE = "SERVICE"
 
 
-class DeviceProtocol(enum.Enum):
-    MQTT = "mqtt"
-    HTTP = "http"
-    WEBSOCKET = "websocket"
-    GRPC = "grpc"
-    BLUETOOTH = "bluetooth"
-    CUSTOM = "custom"
+class ModelStatus(PyEnum):
+    DRAFT = "DRAFT"
+    ACTIVE = "ACTIVE"
+    DEPRECATED = "DEPRECATED"
+    MAINTENANCE = "MAINTENANCE"
 
 
 class SmartModel(Base):
@@ -32,36 +25,24 @@ class SmartModel(Base):
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String(255), nullable=False)
-    type = Column(String(50), nullable=False)
-    category = Column(Enum(ModelCategory), nullable=False)
-    description = Column(Text)
+    type = Column(Enum(ModelType), nullable=False)
+    status = Column(Enum(ModelStatus), default=ModelStatus.DRAFT)
     version = Column(String(50), nullable=False)
 
-    metadata = Column(JSON)
-    configuration = Column(JSON)
-    capabilities = Column(JSON)
+    # Model özellikleri - metadata yerine meta_info kullanıyoruz
+    meta_info = Column(JSON)  # Genişletilebilir özellikler
+    configuration = Column(JSON)  # Model konfigürasyonu
+    capabilities = Column(JSON)  # Yetenekler
 
-    protocol = Column(Enum(DeviceProtocol), nullable=True)
-    connection_info = Column(JSON, nullable=True)
-    requires_authentication = Column(Boolean, default=False)
-
+    # Audit fields
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(DateTime, onupdate=datetime.utcnow)
+    created_by = Column(String(255))
     is_active = Column(Boolean, default=True)
 
+    # Relationships
     features = relationship("SmartFeature", back_populates="model", cascade="all, delete-orphan")
-    integrations = relationship("ModelIntegration", back_populates="model")
-
-
-class FeatureType(enum.Enum):
-    SENSOR = "sensor"
-    ACTUATOR = "actuator"
-    ANALYTICS = "analytics"
-    CONTROL = "control"
-    DATA_PROCESSING = "data_processing"
-    NOTIFICATION = "notification"
-    INTEGRATION = "integration"
-    CUSTOM = "custom"
+    integrations = relationship("ModelIntegration", back_populates="model", cascade="all, delete-orphan")
 
 
 class SmartFeature(Base):
@@ -70,27 +51,30 @@ class SmartFeature(Base):
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     model_id = Column(String(36), ForeignKey('smart_models.id'), nullable=False)
     name = Column(String(255), nullable=False)
-    feature_type = Column(Enum(FeatureType), nullable=False)
     description = Column(Text)
+    feature_type = Column(String(50), nullable=False)
 
-    parameters = Column(JSON)
-    response_format = Column(JSON)
-    constraints = Column(JSON)
-    dependencies = Column(JSON)
+    # Feature detayları
+    parameters = Column(JSON)  # Giriş parametreleri
+    response_schema = Column(JSON)  # Çıkış şeması
+    constraints = Column(JSON)  # Kısıtlar
 
-    endpoint = Column(String(255), nullable=True)
-    method = Column(String(50), nullable=True)
-    rate_limit = Column(JSON, nullable=True)
+    # Teknik detaylar
+    endpoint = Column(String(255))
+    method = Column(String(50))
+    rate_limit = Column(JSON)
 
+    # Status ve güvenlik
     is_active = Column(Boolean, default=True)
     requires_auth = Column(Boolean, default=False)
-    status = Column(String(50), default='ACTIVE')
 
+    # Audit fields
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = Column(DateTime, onupdate=datetime.utcnow)
+    created_by = Column(String(255))
 
+    # Relationships
     model = relationship("SmartModel", back_populates="features")
-    validations = relationship("FeatureValidation", back_populates="feature")
 
 
 class ModelIntegration(Base):
@@ -103,16 +87,9 @@ class ModelIntegration(Base):
     config = Column(JSON)
     status = Column(String(50), default='ACTIVE')
 
+    # Audit fields
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, onupdate=datetime.utcnow)
+
+    # Relationship
     model = relationship("SmartModel", back_populates="integrations")
-
-
-class FeatureValidation(Base):
-    __tablename__ = "feature_validations"
-
-    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    feature_id = Column(String(36), ForeignKey('smart_features.id'), nullable=False)
-    validation_type = Column(String(50), nullable=False)
-    rules = Column(JSON)
-    is_required = Column(Boolean, default=True)
-
-    feature = relationship("SmartFeature", back_populates="validations")

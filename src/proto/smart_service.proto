@@ -2,59 +2,143 @@ syntax = "proto3";
 
 package smart_service;
 
-// Smart Model tanımı
+// Model Status
+enum ModelStatus {
+    DRAFT = 0;
+    ACTIVE = 1;
+    DEPRECATED = 2;
+    MAINTENANCE = 3;
+}
+
+// Integration Types
+enum IntegrationType {
+    IOT_DEVICE = 0;
+    WEATHER_SERVICE = 1;
+    CUSTOM = 2;
+}
+
+// Configuration messages
+message ModelConfiguration {
+    map<string, string> settings = 1;
+    repeated string capabilities = 2;
+    map<string, string> metadata = 3;
+}
+
+message IntegrationConfig {
+    string type = 1;
+    string base_url = 2;
+    string auth_type = 3;
+    map<string, string> settings = 4;
+}
+
+// Smart Model messages
 message SmartModel {
     string id = 1;
     string name = 2;
-    string type = 3;        // DEVICE veya SERVICE
-    string category = 4;    // camera, weather, movie vs.
+    string type = 3;
+    string category = 4;
     string description = 5;
+    ModelStatus status = 6;
+    string version = 7;
+    ModelConfiguration configuration = 8;
+    repeated SmartFeature features = 9;
+    repeated IntegrationConfig integrations = 10;
+    string created_by = 11;
+    string created_at = 12;
+    string updated_at = 13;
 }
 
-// Smart Feature tanımı
+// Feature messages
+message FeatureParameter {
+    string name = 1;
+    string type = 2;
+    bool required = 3;
+    string default_value = 4;
+    map<string, string> constraints = 5;
+}
+
 message SmartFeature {
     string id = 1;
     string model_id = 2;
     string name = 3;
     string description = 4;
-    string function_type = 5;
+    string feature_type = 5;
+    repeated FeatureParameter parameters = 6;
+    map<string, string> response_schema = 7;
+    map<string, string> constraints = 8;
+    bool requires_auth = 9;
+    string status = 10;
+    string created_by = 11;
+    string created_at = 12;
+    string updated_at = 13;
 }
 
-// İstek ve yanıt mesajları
+// Request/Response messages
 message CreateModelRequest {
-    SmartModel model = 1;
+    string name = 1;
+    string type = 2;
+    string category = 3;
+    string description = 4;
+    ModelConfiguration configuration = 5;
+    repeated IntegrationConfig integrations = 6;
+    repeated SmartFeature features = 7;
+    string user_id = 8;
+}
+
+message UpdateModelRequest {
+    string model_id = 1;
+    ModelConfiguration configuration = 2;
+    repeated IntegrationConfig integrations = 3;
+    string user_id = 4;
 }
 
 message GetModelRequest {
     string id = 1;
 }
 
-message ListModelsRequest {
+message SearchModelsRequest {
     string type = 1;
     string category = 2;
+    ModelStatus status = 3;
+    repeated string capabilities = 4;
+    int32 page = 5;
+    int32 size = 6;
 }
 
-message ListModelsResponse {
+message SearchModelsResponse {
     repeated SmartModel models = 1;
+    int32 total = 2;
 }
 
-message UpdateModelRequest {
-    string id = 1;
-    string name = 2;
-    string type = 3;
-    string category = 4;
-    string description = 5;
+message AddFeatureRequest {
+    string model_id = 1;
+    SmartFeature feature = 2;
+    string user_id = 3;
 }
 
-message DeleteModelRequest {
-    string id = 1;
+message GetModelStatusRequest {
+    string model_id = 1;
 }
 
-// Ana servis tanımı
+message ModelStatusResponse {
+    string model_id = 1;
+    ModelStatus status = 2;
+    map<string, string> integration_status = 3;
+    map<string, string> feature_status = 4;
+    string last_checked = 5;
+}
+
+// Service definition
 service SmartService {
+    // Model operations
     rpc CreateModel (CreateModelRequest) returns (SmartModel);
-    rpc GetModel (GetModelRequest) returns (SmartModel);
     rpc UpdateModel (UpdateModelRequest) returns (SmartModel);
-    rpc DeleteModel (DeleteModelRequest) returns (SmartModel);
-    rpc ListModels (ListModelsRequest) returns (ListModelsResponse);
+    rpc GetModel (GetModelRequest) returns (SmartModel);
+    rpc SearchModels (SearchModelsRequest) returns (SearchModelsResponse);
+
+    // Feature operations
+    rpc AddFeature (AddFeatureRequest) returns (SmartFeature);
+
+    // Status operations
+    rpc GetModelStatus (GetModelStatusRequest) returns (ModelStatusResponse);
 }

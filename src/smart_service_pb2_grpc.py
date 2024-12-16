@@ -6,7 +6,7 @@ import smart_service_pb2 as smart__service__pb2
 
 
 class SmartServiceStub(object):
-    """Ana servis tanımı
+    """Service definition
     """
 
     def __init__(self, channel):
@@ -20,33 +20,45 @@ class SmartServiceStub(object):
                 request_serializer=smart__service__pb2.CreateModelRequest.SerializeToString,
                 response_deserializer=smart__service__pb2.SmartModel.FromString,
                 )
-        self.GetModel = channel.unary_unary(
-                '/smart_service.SmartService/GetModel',
-                request_serializer=smart__service__pb2.GetModelRequest.SerializeToString,
-                response_deserializer=smart__service__pb2.SmartModel.FromString,
-                )
         self.UpdateModel = channel.unary_unary(
                 '/smart_service.SmartService/UpdateModel',
                 request_serializer=smart__service__pb2.UpdateModelRequest.SerializeToString,
                 response_deserializer=smart__service__pb2.SmartModel.FromString,
                 )
-        self.DeleteModel = channel.unary_unary(
-                '/smart_service.SmartService/DeleteModel',
-                request_serializer=smart__service__pb2.DeleteModelRequest.SerializeToString,
+        self.GetModel = channel.unary_unary(
+                '/smart_service.SmartService/GetModel',
+                request_serializer=smart__service__pb2.GetModelRequest.SerializeToString,
                 response_deserializer=smart__service__pb2.SmartModel.FromString,
                 )
-        self.ListModels = channel.unary_unary(
-                '/smart_service.SmartService/ListModels',
-                request_serializer=smart__service__pb2.ListModelsRequest.SerializeToString,
-                response_deserializer=smart__service__pb2.ListModelsResponse.FromString,
+        self.SearchModels = channel.unary_unary(
+                '/smart_service.SmartService/SearchModels',
+                request_serializer=smart__service__pb2.SearchModelsRequest.SerializeToString,
+                response_deserializer=smart__service__pb2.SearchModelsResponse.FromString,
+                )
+        self.AddFeature = channel.unary_unary(
+                '/smart_service.SmartService/AddFeature',
+                request_serializer=smart__service__pb2.AddFeatureRequest.SerializeToString,
+                response_deserializer=smart__service__pb2.SmartFeature.FromString,
+                )
+        self.GetModelStatus = channel.unary_unary(
+                '/smart_service.SmartService/GetModelStatus',
+                request_serializer=smart__service__pb2.GetModelStatusRequest.SerializeToString,
+                response_deserializer=smart__service__pb2.ModelStatusResponse.FromString,
                 )
 
 
 class SmartServiceServicer(object):
-    """Ana servis tanımı
+    """Service definition
     """
 
     def CreateModel(self, request, context):
+        """Model operations
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UpdateModel(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -58,20 +70,22 @@ class SmartServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def UpdateModel(self, request, context):
+    def SearchModels(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def DeleteModel(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+    def AddFeature(self, request, context):
+        """Feature operations
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def ListModels(self, request, context):
-        """Missing associated documentation comment in .proto file."""
+    def GetModelStatus(self, request, context):
+        """Status operations
+        """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -84,25 +98,30 @@ def add_SmartServiceServicer_to_server(servicer, server):
                     request_deserializer=smart__service__pb2.CreateModelRequest.FromString,
                     response_serializer=smart__service__pb2.SmartModel.SerializeToString,
             ),
-            'GetModel': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetModel,
-                    request_deserializer=smart__service__pb2.GetModelRequest.FromString,
-                    response_serializer=smart__service__pb2.SmartModel.SerializeToString,
-            ),
             'UpdateModel': grpc.unary_unary_rpc_method_handler(
                     servicer.UpdateModel,
                     request_deserializer=smart__service__pb2.UpdateModelRequest.FromString,
                     response_serializer=smart__service__pb2.SmartModel.SerializeToString,
             ),
-            'DeleteModel': grpc.unary_unary_rpc_method_handler(
-                    servicer.DeleteModel,
-                    request_deserializer=smart__service__pb2.DeleteModelRequest.FromString,
+            'GetModel': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetModel,
+                    request_deserializer=smart__service__pb2.GetModelRequest.FromString,
                     response_serializer=smart__service__pb2.SmartModel.SerializeToString,
             ),
-            'ListModels': grpc.unary_unary_rpc_method_handler(
-                    servicer.ListModels,
-                    request_deserializer=smart__service__pb2.ListModelsRequest.FromString,
-                    response_serializer=smart__service__pb2.ListModelsResponse.SerializeToString,
+            'SearchModels': grpc.unary_unary_rpc_method_handler(
+                    servicer.SearchModels,
+                    request_deserializer=smart__service__pb2.SearchModelsRequest.FromString,
+                    response_serializer=smart__service__pb2.SearchModelsResponse.SerializeToString,
+            ),
+            'AddFeature': grpc.unary_unary_rpc_method_handler(
+                    servicer.AddFeature,
+                    request_deserializer=smart__service__pb2.AddFeatureRequest.FromString,
+                    response_serializer=smart__service__pb2.SmartFeature.SerializeToString,
+            ),
+            'GetModelStatus': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetModelStatus,
+                    request_deserializer=smart__service__pb2.GetModelStatusRequest.FromString,
+                    response_serializer=smart__service__pb2.ModelStatusResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -112,7 +131,7 @@ def add_SmartServiceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class SmartService(object):
-    """Ana servis tanımı
+    """Service definition
     """
 
     @staticmethod
@@ -128,23 +147,6 @@ class SmartService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/smart_service.SmartService/CreateModel',
             smart__service__pb2.CreateModelRequest.SerializeToString,
-            smart__service__pb2.SmartModel.FromString,
-            options, channel_credentials,
-            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
-
-    @staticmethod
-    def GetModel(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/smart_service.SmartService/GetModel',
-            smart__service__pb2.GetModelRequest.SerializeToString,
             smart__service__pb2.SmartModel.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -167,7 +169,7 @@ class SmartService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def DeleteModel(request,
+    def GetModel(request,
             target,
             options=(),
             channel_credentials=None,
@@ -177,14 +179,14 @@ class SmartService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/smart_service.SmartService/DeleteModel',
-            smart__service__pb2.DeleteModelRequest.SerializeToString,
+        return grpc.experimental.unary_unary(request, target, '/smart_service.SmartService/GetModel',
+            smart__service__pb2.GetModelRequest.SerializeToString,
             smart__service__pb2.SmartModel.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def ListModels(request,
+    def SearchModels(request,
             target,
             options=(),
             channel_credentials=None,
@@ -194,8 +196,42 @@ class SmartService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/smart_service.SmartService/ListModels',
-            smart__service__pb2.ListModelsRequest.SerializeToString,
-            smart__service__pb2.ListModelsResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/smart_service.SmartService/SearchModels',
+            smart__service__pb2.SearchModelsRequest.SerializeToString,
+            smart__service__pb2.SearchModelsResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def AddFeature(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/smart_service.SmartService/AddFeature',
+            smart__service__pb2.AddFeatureRequest.SerializeToString,
+            smart__service__pb2.SmartFeature.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetModelStatus(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/smart_service.SmartService/GetModelStatus',
+            smart__service__pb2.GetModelStatusRequest.SerializeToString,
+            smart__service__pb2.ModelStatusResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

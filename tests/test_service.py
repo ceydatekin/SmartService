@@ -1,85 +1,54 @@
 import pytest
-from unittest.mock import MagicMock
-from src.services.service import SmartServiceServicer
-from src import smart_service_pb2 as pb2
+from src.domain.rules import BusinessRuleValidationError
 
 
-@pytest.fixture
-def service():
-    session_maker = MagicMock()
-    session_maker.return_value.__enter__ = MagicMock(return_value=MagicMock())
-    session_maker.return_value.__exit__ = MagicMock(return_value=None)
-    return SmartServiceServicer(session_maker)
-
-
-def test_create_model(service):
-    # Test verisi
-    request = MagicMock()
-    request.model = pb2.SmartModel(
-        name="Test Camera",
-        type="DEVICE",
-        category="camera",
-        description="Test description"
+async def test_create_model_service(model_service, sample_model_data):
+    """Test model creation through service"""
+    model = await model_service.create_model(
+        sample_model_data,
+        user_id="test_user"
     )
 
-    context = MagicMock()
-
-    # Test
-    response = service.CreateModel(request, context)
-
-    # Assertion
-    assert response.name == "Test Camera"
-    assert response.type == "DEVICE"
+    assert model.name == sample_model_data["name"]
+    assert model.type == sample_model_data["type"]
+    assert model.configuration == sample_model_data["configuration"]
 
 
+async def test_model_validation(model_service):
+    """Test model validation rules"""
+    invalid_data = {
+        "name": "Test",  # Missing required fields
+    }
 
-def create_model_with_empty_name(service):
-    request = MagicMock()
-    request.model = pb2.SmartModel(
-        name="",
-        type="DEVICE",
-        category="camera",
-        description="Test description"
+    with pytest.raises(BusinessRuleValidationError):
+        await model_service.create_model(invalid_data, user_id="test_user")
+
+
+async def test_feature_addition(model_service, feature_service, sample_model_data, sample_feature_data):
+    """Test feature addition to model"""
+    model = await model_service.create_model(
+        sample_model_data,
+        user_id="test_user"
     )
 
-    context = MagicMock()
-
-    response = service.CreateModel(request, context)
-
-    assert response.name == ""
-    assert response.type == "DEVICE"
-
-
-def create_model_with_invalid_type(service):
-    request = MagicMock()
-    request.model = pb2.SmartModel(
-        name="Test Camera",
-        type="INVALID_TYPE",
-        category="camera",
-        description="Test description"
+    feature = await feature_service.add_feature(
+        model.id,
+        sample_feature_data,
+        user_id="test_user"
     )
 
-    context = MagicMock()
-
-    response = service.CreateModel(request, context)
-
-    assert response.name == "Test Camera"
-    assert response.type == "INVALID_TYPE"
+    assert feature.model_id == model.id
+    assert feature.name == sample_feature_data["name"]
 
 
-def create_model_with_missing_description(service):
-    request = MagicMock()
-    request.model = pb2.SmartModel(
-        name="Test Camera",
-        type="DEVICE",
-        category="camera",
-        description=""
+@pytest.mark.integration
+async def test_orchestrator_flow(orchestrator, sample_model_data):
+    """Test complete orchestration flow"""
+    result = await orchestrator.provision_model(
+        sample_model_data,
+        user_id="test_user"
     )
 
-    context = MagicMock()
-
-    response = service.CreateModel(request, context)
-
-    assert response.name == "Test Camera"
-    assert response.type == "DEVICE"
-    assert response.description == ""
+    assert result["model"] is not None
+    assert result["integrations"] is not None
+    assert result["model"].name == sample_model_data["name"]
