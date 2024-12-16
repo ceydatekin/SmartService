@@ -2,10 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: smart-service
-  labels:
-    app: smart-service
 spec:
-  replicas: 2
+  replicas: 1  # Test için tek replica kullanıyoruz
   selector:
     matchLabels:
       app: smart-service
@@ -17,50 +15,23 @@ spec:
       containers:
       - name: smart-service
         image: smart-service:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Never
         ports:
         - containerPort: 50051
           name: grpc
         env:
         - name: DB_HOST
-          valueFrom:
-            configMapKeyRef:
-              name: smart-service-config
-              key: db_host
+          value: postgres
         - name: DB_PORT
-          valueFrom:
-            configMapKeyRef:
-              name: smart-service-config
-              key: db_port
+          value: "5432"
         - name: DB_NAME
-          valueFrom:
-            configMapKeyRef:
-              name: smart-service-config
-              key: db_name
+          value: smartdb
         - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              name: smart-service-secrets
-              key: db_user
+          value: postgres
         - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: smart-service-secrets
-              key: db_password
-        resources:
-          limits:
-            cpu: "500m"
-            memory: "512Mi"
-          requests:
-            cpu: "200m"
-            memory: "256Mi"
+          value: password123
         readinessProbe:
           tcpSocket:
             port: grpc
           initialDelaySeconds: 5
           periodSeconds: 10
-        livenessProbe:
-          tcpSocket:
-            port: grpc
-          initialDelaySeconds: 15
-          periodSeconds: 20
