@@ -4,7 +4,7 @@ import functools
 import time
 from typing import Optional, Callable
 import threading
-import asyncio  # Eksik import'u ekledik
+import asyncio
 
 # Metrics
 REQUEST_COUNT = Counter(
@@ -67,7 +67,6 @@ def monitor(method_name: Optional[str] = None) -> Callable:
                     method=method_name or func.__name__
                 ).observe(time.time() - start_time)
 
-        # inspect.iscoroutinefunction kullanarak async kontrolü yapalım
         return async_wrapper if asyncio.iscoroutinefunction(func) else sync_wrapper
     return decorator
 

@@ -9,7 +9,6 @@ class BusinessRuleValidationError(Exception):
 class ModelBusinessRules:
     @staticmethod
     def validate_model_activation(model: SmartModel) -> bool:
-        """Model aktivasyon kuralları"""
         if not model.features:
             raise BusinessRuleValidationError(
                 "Model must have at least one feature to be activated"
@@ -29,7 +28,6 @@ class ModelBusinessRules:
 
     @staticmethod
     def validate_feature_addition(model: SmartModel, feature: SmartFeature) -> bool:
-        """Feature ekleme kuralları"""
         # Check feature limit
         if len(model.features) >= 10:
             raise BusinessRuleValidationError(
@@ -52,7 +50,6 @@ class ModelBusinessRules:
 
     @staticmethod
     def validate_model_deprecation(model: SmartModel) -> bool:
-        """Model deprecation kuralları"""
         if model.status == ModelStatus.DRAFT:
             raise BusinessRuleValidationError(
                 "Draft model cannot be deprecated"

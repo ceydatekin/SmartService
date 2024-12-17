@@ -1,6 +1,5 @@
 from typing import Dict, Any, Optional
 from sqlalchemy.orm import Session
-
 from src.domain.rules import BusinessRuleValidationError
 from src.models.models import SmartModel, ModelType
 from src.services.base import BaseService
