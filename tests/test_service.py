@@ -23,12 +23,12 @@ async def test_create_model_service(model_service, sample_model_data):
 async def test_model_validation(model_service):
     """Test model validation rules"""
     invalid_data = {
-        "name": "Test",  # Missing type field
+        "name": "Test",
     }
 
     with pytest.raises(BusinessRuleValidationError) as exc:
         await model_service.create_model(invalid_data, user_id="test_user")
-    assert "Missing required fields: type" in str(exc.value)  # field -> fields olarak düzeltildi
+    assert "Missing required fields: type" in str(exc.value)
 
 
 @pytest.mark.asyncio

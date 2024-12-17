@@ -12,7 +12,6 @@ from src import smart_service_pb2_grpc as pb2_grpc
 
 
 def run():
-    # Sunucuya bağlan
     channel = grpc.insecure_channel('localhost:50051')
     stub = pb2_grpc.SmartServiceStub(channel)
 
@@ -29,7 +28,7 @@ def run():
         )
         response = stub.CreateModel(model_request)
         print(f"Model oluşturuldu: ID = {response.id}")
-        model_id = response.id  # Feature oluşturmak için kullanacağız
+        model_id = response.id
 
         # Test 2: Oluşturulan Modeli Al
         print("\n2. Model Bilgileri Alınıyor...")
