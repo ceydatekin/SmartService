@@ -2,7 +2,8 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import smart_service_pb2 as smart__service__pb2
+from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
+from src  import smart_service_pb2 as smart__service__pb2
 
 
 class SmartServiceStub(object):
@@ -25,6 +26,11 @@ class SmartServiceStub(object):
                 request_serializer=smart__service__pb2.UpdateModelRequest.SerializeToString,
                 response_deserializer=smart__service__pb2.SmartModel.FromString,
                 )
+        self.DeleteModel = channel.unary_unary(
+                '/smart_service.SmartService/DeleteModel',
+                request_serializer=smart__service__pb2.DeleteModelRequest.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                )
         self.GetModel = channel.unary_unary(
                 '/smart_service.SmartService/GetModel',
                 request_serializer=smart__service__pb2.GetModelRequest.SerializeToString,
@@ -39,6 +45,16 @@ class SmartServiceStub(object):
                 '/smart_service.SmartService/AddFeature',
                 request_serializer=smart__service__pb2.AddFeatureRequest.SerializeToString,
                 response_deserializer=smart__service__pb2.SmartFeature.FromString,
+                )
+        self.UpdateFeature = channel.unary_unary(
+                '/smart_service.SmartService/UpdateFeature',
+                request_serializer=smart__service__pb2.UpdateFeatureRequest.SerializeToString,
+                response_deserializer=smart__service__pb2.SmartFeature.FromString,
+                )
+        self.DeleteFeature = channel.unary_unary(
+                '/smart_service.SmartService/DeleteFeature',
+                request_serializer=smart__service__pb2.DeleteFeatureRequest.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
         self.GetModelStatus = channel.unary_unary(
                 '/smart_service.SmartService/GetModelStatus',
@@ -64,6 +80,12 @@ class SmartServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def DeleteModel(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
     def GetModel(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -79,6 +101,18 @@ class SmartServiceServicer(object):
     def AddFeature(self, request, context):
         """Feature operations
         """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UpdateFeature(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteFeature(self, request, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -103,6 +137,11 @@ def add_SmartServiceServicer_to_server(servicer, server):
                     request_deserializer=smart__service__pb2.UpdateModelRequest.FromString,
                     response_serializer=smart__service__pb2.SmartModel.SerializeToString,
             ),
+            'DeleteModel': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteModel,
+                    request_deserializer=smart__service__pb2.DeleteModelRequest.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            ),
             'GetModel': grpc.unary_unary_rpc_method_handler(
                     servicer.GetModel,
                     request_deserializer=smart__service__pb2.GetModelRequest.FromString,
@@ -117,6 +156,16 @@ def add_SmartServiceServicer_to_server(servicer, server):
                     servicer.AddFeature,
                     request_deserializer=smart__service__pb2.AddFeatureRequest.FromString,
                     response_serializer=smart__service__pb2.SmartFeature.SerializeToString,
+            ),
+            'UpdateFeature': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateFeature,
+                    request_deserializer=smart__service__pb2.UpdateFeatureRequest.FromString,
+                    response_serializer=smart__service__pb2.SmartFeature.SerializeToString,
+            ),
+            'DeleteFeature': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteFeature,
+                    request_deserializer=smart__service__pb2.DeleteFeatureRequest.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             ),
             'GetModelStatus': grpc.unary_unary_rpc_method_handler(
                     servicer.GetModelStatus,
@@ -169,6 +218,23 @@ class SmartService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
+    def DeleteModel(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/smart_service.SmartService/DeleteModel',
+            smart__service__pb2.DeleteModelRequest.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
     def GetModel(request,
             target,
             options=(),
@@ -216,6 +282,40 @@ class SmartService(object):
         return grpc.experimental.unary_unary(request, target, '/smart_service.SmartService/AddFeature',
             smart__service__pb2.AddFeatureRequest.SerializeToString,
             smart__service__pb2.SmartFeature.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def UpdateFeature(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/smart_service.SmartService/UpdateFeature',
+            smart__service__pb2.UpdateFeatureRequest.SerializeToString,
+            smart__service__pb2.SmartFeature.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def DeleteFeature(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/smart_service.SmartService/DeleteFeature',
+            smart__service__pb2.DeleteFeatureRequest.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

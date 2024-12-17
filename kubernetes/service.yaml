@@ -6,8 +6,10 @@ spec:
   selector:
     app: smart-service
   ports:
-  - port: 50051
-    targetPort: grpc
-    name: grpc
-    protocol: TCP
+  - name: grpc
+    port: 50051
+    targetPort: 50051
+  - name: metrics
+    port: 8000
+    targetPort: 8000
   type: LoadBalancer

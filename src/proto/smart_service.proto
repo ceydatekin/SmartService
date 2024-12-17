@@ -2,6 +2,9 @@ syntax = "proto3";
 
 package smart_service;
 
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
 // Model Status
 enum ModelStatus {
     DRAFT = 0;
@@ -96,6 +99,11 @@ message GetModelRequest {
     string id = 1;
 }
 
+message DeleteModelRequest {
+    string model_id = 1;
+    string user_id = 2;
+}
+
 message SearchModelsRequest {
     string type = 1;
     string category = 2;
@@ -128,16 +136,32 @@ message ModelStatusResponse {
     string last_checked = 5;
 }
 
+message UpdateFeatureRequest {
+    string feature_id = 1;
+    string name = 2;
+    string description = 3;
+    map<string, string> parameters = 4;
+    string user_id = 5;
+}
+
+message DeleteFeatureRequest {
+    string feature_id = 1;
+    string user_id = 2;
+}
+
 // Service definition
 service SmartService {
     // Model operations
     rpc CreateModel (CreateModelRequest) returns (SmartModel);
     rpc UpdateModel (UpdateModelRequest) returns (SmartModel);
+    rpc DeleteModel (DeleteModelRequest) returns (google.protobuf.Empty);
     rpc GetModel (GetModelRequest) returns (SmartModel);
     rpc SearchModels (SearchModelsRequest) returns (SearchModelsResponse);
 
     // Feature operations
     rpc AddFeature (AddFeatureRequest) returns (SmartFeature);
+    rpc UpdateFeature (UpdateFeatureRequest) returns (SmartFeature);
+    rpc DeleteFeature (DeleteFeatureRequest) returns (google.protobuf.Empty);
 
     // Status operations
     rpc GetModelStatus (GetModelStatusRequest) returns (ModelStatusResponse);

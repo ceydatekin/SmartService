@@ -2,14 +2,14 @@ import grpc
 from typing import Dict, Any
 import logging
 
-from ..proto import smart_service_pb2 as pb2
-from ..proto import smart_service_pb2_grpc as pb2_grpc
-from ..utils.monitoring import monitor
+from src import smart_service_pb2 as pb2
+from src import smart_service_pb2_grpc as pb2_grpc
+from src.utils.monitoring import monitor
 
 logger = logging.getLogger(__name__)
 
 class SmartServiceServicer(pb2_grpc.SmartServiceServicer):
-    def __init__(self, model_service, feature_service, orchestrator):
+    def __init__(self, model_service=None, feature_service=None, orchestrator=None):
         self.model_service = model_service
         self.feature_service = feature_service
         self.orchestrator = orchestrator

@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: smart-service
 spec:
-  replicas: 1  # Test için tek replica kullanıyoruz
+  replicas: 1
   selector:
     matchLabels:
       app: smart-service
@@ -19,19 +19,11 @@ spec:
         ports:
         - containerPort: 50051
           name: grpc
+        - containerPort: 8000
+          name: metrics
+        envFrom:
+        - configMapRef:
+            name: smart-service-config
         env:
-        - name: DB_HOST
-          value: postgres
-        - name: DB_PORT
-          value: "5432"
-        - name: DB_NAME
-          value: smartdb
-        - name: DB_USER
-          value: postgres
-        - name: DB_PASSWORD
-          value: password123
-        readinessProbe:
-          tcpSocket:
-            port: grpc
-          initialDelaySeconds: 5
-          periodSeconds: 10
+          - name: DATABASE_URL
+            value: "postgresql://postgres:password123@postgres:5432/smartdb"

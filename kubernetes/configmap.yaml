@@ -3,8 +3,8 @@ kind: ConfigMap
 metadata:
   name: smart-service-config
 data:
-  db_host: "postgres"
-  db_port: "5432"
-  db_name: "smartdb"
-  grpc_port: "50051"
-  log_level: "INFO"
+  DATABASE_URL: "postgresql://postgres:password123@postgres:5432/smartdb"
+  GRPC_PORT: "50051"
+  LOG_LEVEL: "INFO"
+  ENABLE_METRICS: "true"
+  METRICS_PORT: "8000"
