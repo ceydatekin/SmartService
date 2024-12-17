@@ -125,7 +125,7 @@ graph TB
 
 ```bash
 # Run all tests
-pytest
+pytest or pytest tests/ -v
 
 # Run with coverage
 pytest --cov=src
