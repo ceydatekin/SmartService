@@ -64,38 +64,64 @@ service SmartService {
 2. Integration tests
 3. Load tests
 
-## 4. Database Schema
+## Database Schema
 ```mermaid
 erDiagram
-    SmartModel ||--o{ SmartFeature : has
-    SmartModel ||--o{ ModelIntegration : contains
     SmartModel {
-        string id PK
+        uuid id PK
         string name
         enum type
         string category
         string description
         enum status
+        json meta_info
         json configuration
+        json capabilities
+        string version
+        string vendor
         timestamp created_at
+        timestamp updated_at
+        string created_by
+        boolean is_active
     }
+
     SmartFeature {
-        string id PK
-        string model_id FK
+        uuid id PK
+        uuid model_id FK
         string name
         string description
         enum feature_type
         json parameters
         json response_schema
+        json constraints
+        boolean requires_auth
+        string status
+        timestamp created_at
+        timestamp updated_at
+        string created_by
     }
+
     ModelIntegration {
-        string id PK
-        string model_id FK
+        uuid id PK
+        uuid model_id FK
         string name
-        string type
+        string integration_type
         json config
         string status
+        timestamp created_at
+        timestamp updated_at
     }
+
+    Tag {
+        uuid id PK
+        string name
+        string category
+        text description
+    }
+
+    SmartModel ||--o{ SmartFeature : "has"
+    SmartModel ||--o{ ModelIntegration : "integrates"
+    SmartModel }|--|| Tag : "tagged with"
 ```
 
 ## 5. Deployment Guide
