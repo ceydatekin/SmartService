@@ -1,9 +1,7 @@
-import pytest
 from src.models.models import SmartModel, SmartFeature, ModelStatus, ModelType, FeatureType
 
 
 def test_create_smart_model(db_session, sample_model_data):
-    """Test model creation"""
     model = SmartModel(**sample_model_data)
 
     db_session.add(model)
@@ -17,7 +15,6 @@ def test_create_smart_model(db_session, sample_model_data):
 
 
 def test_add_feature_to_model(db_session, sample_model_data, sample_feature_data):
-    """Test adding feature to model"""
     model = SmartModel(**sample_model_data)
     db_session.add(model)
     db_session.commit()
@@ -36,7 +33,6 @@ def test_add_feature_to_model(db_session, sample_model_data, sample_feature_data
 
 
 def test_model_status_transitions(db_session, sample_model_data):
-    """Test model status transitions"""
     model = SmartModel(**sample_model_data)
 
     assert model.status == ModelStatus.DRAFT

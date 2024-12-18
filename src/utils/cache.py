@@ -53,12 +53,10 @@ def cached(prefix):
             cache = Cache()
             key = f"{prefix}:{kwargs.get('id', '')}"
 
-            # Try cache first
             result = cache.get(key)
             if result:
                 return result
 
-            # Get fresh data
             result = func(*args, **kwargs)
             if result:
                 cache.set(key, result)

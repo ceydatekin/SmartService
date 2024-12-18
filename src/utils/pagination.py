@@ -7,7 +7,6 @@ T = TypeVar('T')
 
 @dataclass
 class PaginationMetadata:
-    """Metadata for pagination results"""
     page: int
     size: int
     total_items: int
@@ -18,14 +17,11 @@ class PaginationMetadata:
 
 @dataclass
 class PaginatedResult(Generic[T]):
-    """Generic container for paginated results"""
     items: List[T]
     metadata: PaginationMetadata
 
 
 class PaginationParams:
-    """Configuration for pagination"""
-
     def __init__(
             self,
             page: int = 0,
@@ -42,8 +38,6 @@ class PaginationParams:
 
 
 class QueryPaginator:
-    """Handles pagination of SQLAlchemy queries"""
-
     @staticmethod
     def paginate(
             query: Query,
@@ -61,13 +55,10 @@ class QueryPaginator:
         Returns:
             PaginatedResult containing items and pagination metadata
         """
-        # Get total count
         total = count_query.count() if count_query else query.count()
 
-        # Get paginated items
         items = query.offset(params.offset).limit(params.size).all()
 
-        # Calculate metadata
         total_pages = (total + params.size - 1) // params.size
 
         metadata = PaginationMetadata(

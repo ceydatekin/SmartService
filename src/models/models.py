@@ -10,7 +10,6 @@ from enum import Enum as PyEnum
 
 Base = declarative_base()
 
-# Many-to-Many tablolar
 model_tags = Table('model_tags', Base.metadata,
                    Column('model_id', String(36), ForeignKey('smart_models.id')),
                    Column('tag_id', String(36), ForeignKey('tags.id'))
@@ -53,7 +52,6 @@ class FeatureType(PyEnum):
     CONTROL = "CONTROL"
 
 
-# Model sınıfları
 class Tag(Base):
     __tablename__ = "tags"
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
@@ -73,27 +71,22 @@ class SmartModel(Base):
     version = Column(String(50), nullable=False)
     revision = Column(Integer, default=1)
 
-    # Sınıflandırma
     category = Column(String(100))
     vendor = Column(String(100))
 
-    # Detaylar
     description = Column(Text)
     meta_info = Column(JSON)
     configuration = Column(JSON)
     capabilities = Column(JSON)
 
-    # Güvenlik
     security_level = Column(Enum(SecurityLevel), default=SecurityLevel.MEDIUM)
     authentication_required = Column(Boolean, default=True)
 
-    # Audit
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, onupdate=datetime.utcnow)
     created_by = Column(String(255))
     is_active = Column(Boolean, default=True)
 
-    # İlişkiler
     features = relationship("SmartFeature", back_populates="model", cascade="all, delete-orphan")
     integrations = relationship("ModelIntegration", back_populates="model", cascade="all, delete-orphan")
     tags = relationship("Tag", secondary=model_tags, backref="models")

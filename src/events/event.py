@@ -1,6 +1,5 @@
 import json
 from datetime import datetime
-from typing import List, Callable
 from kafka import KafkaProducer, KafkaConsumer
 from abc import ABC, abstractmethod
 

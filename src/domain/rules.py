@@ -1,4 +1,3 @@
-from typing import List, Dict
 from ..models.models import SmartModel, SmartFeature, ModelStatus
 
 
@@ -28,19 +27,16 @@ class ModelBusinessRules:
 
     @staticmethod
     def validate_feature_addition(model: SmartModel, feature: SmartFeature) -> bool:
-        # Check feature limit
         if len(model.features) >= 10:
             raise BusinessRuleValidationError(
                 "Maximum feature limit reached (10)"
             )
 
-        # Check feature name uniqueness
         if any(f.name == feature.name for f in model.features):
             raise BusinessRuleValidationError(
                 f"Feature name '{feature.name}' already exists"
             )
 
-        # Check required capabilities
         if feature.parameters and not model.capabilities:
             raise BusinessRuleValidationError(
                 "Model must have capabilities defined for parameterized features"

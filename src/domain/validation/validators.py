@@ -6,7 +6,6 @@ from src.models.models import ModelType, FeatureType
 
 T = TypeVar('T')
 
-
 @dataclass
 class ValidationResult:
     is_valid: bool
@@ -19,8 +18,6 @@ class ValidationResult:
 
 
 class DomainValidator(ABC, Generic[T]):
-    """Base validator for domain entities"""
-
     def __init__(self):
         self._errors: List[str] = []
         self._field_errors: dict[str, List[str]] = {}
@@ -52,8 +49,6 @@ class DomainValidator(ABC, Generic[T]):
 
 
 class ModelValidator(DomainValidator['SmartModel']):
-    """Validator for Smart Model entity"""
-
     def __init__(self, min_name_length: int = 3):
         super().__init__()
         self.min_name_length = min_name_length
@@ -91,8 +86,6 @@ class ModelValidator(DomainValidator['SmartModel']):
 
 
 class FeatureValidator(DomainValidator['SmartFeature']):
-    """Validator for Smart Feature entity"""
-
     def __init__(self, min_name_length: int = 3):
         super().__init__()
         self.min_name_length = min_name_length

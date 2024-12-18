@@ -4,7 +4,6 @@ from datetime import datetime
 from typing import Dict, Any, Optional
 
 class DomainEvent:
-    """Base class for all domain events"""
     def __init__(self):
         self.timestamp = datetime.utcnow()
         self.event_id = str(uuid.uuid4())

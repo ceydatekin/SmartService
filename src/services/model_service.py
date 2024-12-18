@@ -11,7 +11,6 @@ class ModelService(BaseService):
 
     @monitor("create_model")
     async def create_model(self, data: Dict[str, Any], user_id: str) -> SmartModel:
-        """Create a new model"""
         try:
             self.validate(data)
 
@@ -36,13 +35,11 @@ class ModelService(BaseService):
             self.handle_error(e, context={'data': data, 'user_id': user_id})
 
     def validate(self, data: Dict[str, Any]) -> bool:
-        """Validate model data"""
         required_fields = ['name', 'type']
         for field in required_fields:
             if field not in data:
                 raise BusinessRuleValidationError(f"Missing required fields: {field}")  # field -> fields
 
-        # Type validation
         if 'type' in data and not isinstance(data['type'], ModelType):
             try:
                 data['type'] = ModelType(data['type'])

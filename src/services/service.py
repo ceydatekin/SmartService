@@ -72,7 +72,6 @@ class SmartServiceServicer(pb2_grpc.SmartServiceServicer):
         )
 
     def _convert_config(self, config) -> pb2.ModelConfiguration:
-        """Convert configuration dictionary to proto message"""
         if not config:
             return pb2.ModelConfiguration()
         return pb2.ModelConfiguration(

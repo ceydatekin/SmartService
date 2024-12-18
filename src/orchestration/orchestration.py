@@ -1,4 +1,3 @@
-import asyncio
 from typing import Dict, Any, List
 import logging
 from datetime import datetime
@@ -12,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 
 class ModelOrchestrator:
-    """Model ve feature'ların yaşam döngüsünü yöneten orchestrator"""
 
     def __init__(
             self,
@@ -30,18 +28,14 @@ class ModelOrchestrator:
             model_data: Dict[str, Any],
             user_id: str
     ) -> Dict[str, Any]:
-        """Yeni model oluşturma ve konfigürasyon süreci"""
         try:
-            # Model oluştur
             model = self.model_service.create_model(model_data, user_id)
 
-            # Entegrasyonları kur
             integration_results = await self._setup_integrations(
                 model.id,
                 model_data.get('integrations', [])
             )
 
-            # Feature'ları ekle
             feature_results = await self._add_features(
                 model.id,
                 model_data.get('features', []),
@@ -56,7 +50,6 @@ class ModelOrchestrator:
 
         except Exception as e:
             logger.error(f"Model provision failed: {str(e)}")
-            # Cleanup işlemleri
             await self._cleanup_failed_provision(model.id)
             raise
 
@@ -65,7 +58,6 @@ class ModelOrchestrator:
             model_id: str,
             integrations: List[Dict[str, Any]]
     ) -> Dict[str, Any]:
-        """Model entegrasyonlarını kurma"""
         results = {}
         for integration_config in integrations:
             try:
@@ -88,7 +80,6 @@ class ModelOrchestrator:
             features: List[Dict[str, Any]],
             user_id: str
     ) -> Dict[str, Any]:
-        """Model feature'larını ekleme"""
         results = {}
         for feature_data in features:
             try:
@@ -115,19 +106,15 @@ class ModelOrchestrator:
             config_updates: Dict[str, Any],
             user_id: str
     ) -> Dict[str, Any]:
-        """Model konfigürasyonunu güncelleme"""
         try:
-            # Mevcut entegrasyonları kontrol et
             health_status = await self.integration_manager.health_check_all()
 
-            # Model güncelle
             updated_model = self.model_service.update_model(
                 model_id,
                 config_updates,
                 user_id
             )
 
-            # Entegrasyonları yeniden konfigüre et
             if 'integrations' in config_updates:
                 await self._reconfigure_integrations(
                     model_id,
@@ -144,12 +131,9 @@ class ModelOrchestrator:
             raise
 
     async def _cleanup_failed_provision(self, model_id: str):
-        """Başarısız provision temizleme"""
         try:
-            # Entegrasyonları temizle
             await self.integration_manager.cleanup()
 
-            # Model ve feature'ları temizle
             self.model_service.delete_model(model_id)
 
         except Exception as e:
@@ -157,16 +141,13 @@ class ModelOrchestrator:
 
     @monitor("model_status_check")
     async def check_model_status(self, model_id: str) -> Dict[str, Any]:
-        """Model ve bağlı sistemlerin durumunu kontrol et"""
         try:
             model = self.model_service.get_model(model_id)
             if not model:
                 raise ValueError(f"Model not found: {model_id}")
 
-            # Integration sağlık kontrolü
             integration_status = await self.integration_manager.health_check_all()
 
-            # Feature durumlarını kontrol et
             feature_status = {}
             for feature in model.features:
                 feature_status[feature.id] = {

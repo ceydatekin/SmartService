@@ -11,7 +11,6 @@ class BaseService(ABC):
         self.cache = cache
 
     def commit(self):
-        """Güvenli transaction commit"""
         try:
             self.session.commit()
         except Exception as e:
@@ -21,11 +20,9 @@ class BaseService(ABC):
 
     @abstractmethod
     def validate(self, data: Dict[str, Any]) -> bool:
-        """Her servis kendi validation kurallarını implement etmeli"""
         pass
 
     def handle_error(self, error: Exception, context: Dict[str, Any] = None):
-        """Hata yönetimi"""
         self.session.rollback()
         logger.error(f"Service error: {str(error)}, Context: {context}")
         raise error

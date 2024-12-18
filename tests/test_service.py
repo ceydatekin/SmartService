@@ -5,8 +5,6 @@ from src.models.models import ModelType
 
 @pytest.mark.asyncio
 async def test_create_model_service(model_service, sample_model_data):
-    """Test model creation through service"""
-    # Ensure type is ModelType enum
     sample_model_data['type'] = ModelType.DEVICE
 
     model = await model_service.create_model(
@@ -21,7 +19,6 @@ async def test_create_model_service(model_service, sample_model_data):
 
 @pytest.mark.asyncio
 async def test_model_validation(model_service):
-    """Test model validation rules"""
     invalid_data = {
         "name": "Test",
     }
@@ -33,8 +30,6 @@ async def test_model_validation(model_service):
 
 @pytest.mark.asyncio
 async def test_feature_addition(model_service, feature_service, sample_model_data, sample_feature_data):
-    """Test feature addition to model"""
-    # Ensure type is ModelType enum
     sample_model_data['type'] = ModelType.DEVICE
 
     model = await model_service.create_model(

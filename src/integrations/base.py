@@ -10,22 +10,18 @@ logger = logging.getLogger(__name__)
 
 
 class IntegrationError(Exception):
-    """Base exception for integration errors"""
     pass
 
 
 class ConnectionError(IntegrationError):
-    """Raised when connection fails"""
     pass
 
 
 class ExecutionError(IntegrationError):
-    """Raised when execution fails"""
     pass
 
 
 class BaseIntegration(ABC):
-    """Base integration class for all external integrations"""
 
     def __init__(self, config: Dict[str, Any]):
         self.config = self._validate_config(config)
@@ -36,7 +32,6 @@ class BaseIntegration(ABC):
         self.retry_delay = config.get('retry_delay', 5)
         self.timeout = config.get('timeout', 30)
 
-        # Circuit breaker ve rate limiter
         self.circuit_breaker = CircuitBreaker(
             failure_threshold=config.get('failure_threshold', 5),
             reset_timeout=config.get('reset_timeout', 60)
@@ -47,7 +42,6 @@ class BaseIntegration(ABC):
         )
 
     def _validate_config(self, config: Dict[str, Any]) -> Dict[str, Any]:
-        """Config validation"""
         required_fields = ['base_url', 'auth_type']
         for field in required_fields:
             if field not in config:
@@ -56,22 +50,18 @@ class BaseIntegration(ABC):
 
     @abstractmethod
     async def connect(self) -> bool:
-        """Establish connection with external service"""
         pass
 
     @abstractmethod
     async def execute(self, action: str, params: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute integration action"""
         pass
 
     @abstractmethod
     async def health_check(self) -> bool:
-        """Check integration health status"""
         pass
 
     @monitor("integration_retry")
     async def retry_with_backoff(self, operation, *args, **kwargs) -> Any:
-        """Exponential backoff retry mechanism"""
         for attempt in range(self.max_retries):
             try:
                 return await operation(*args, **kwargs)
@@ -86,7 +76,6 @@ class BaseIntegration(ABC):
                 await asyncio.sleep(wait_time)
 
     async def disconnect(self) -> bool:
-        """Clean disconnection from service"""
         try:
             self.status = "DISCONNECTED"
             self.last_connection = None
@@ -96,7 +85,6 @@ class BaseIntegration(ABC):
             return False
 
     def get_status(self) -> Dict[str, Any]:
-        """Get current integration status"""
         return {
             "status": self.status,
             "last_connection": self.last_connection,
@@ -104,7 +92,7 @@ class BaseIntegration(ABC):
             "circuit_breaker_status": self.circuit_breaker.state,
             "config": {
                 k: v for k, v in self.config.items()
-                if k not in ['api_key', 'secret']  # Hide sensitive data
+                if k not in ['api_key', 'secret']
             }
         }
 
@@ -120,7 +108,6 @@ class BaseIntegration(ABC):
             return False
 
     async def initialize(self) -> bool:
-        """Initialize integration"""
         try:
             self.status = "INITIALIZING"
             if await self.connect():
@@ -135,10 +122,8 @@ class BaseIntegration(ABC):
             return False
 
     async def __aenter__(self):
-        """Async context manager entry"""
         await self.initialize()
         return self
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
-        """Async context manager exit"""
         await self.disconnect()

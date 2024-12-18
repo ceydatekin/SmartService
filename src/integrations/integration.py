@@ -7,22 +7,18 @@ logger = logging.getLogger(__name__)
 
 
 class BaseIntegration:
-    """Base integration class"""
 
     def __init__(self, config: Dict[str, Any]):
         self.config = self._validate_config(config)
         self.status = "INITIALIZED"
 
     async def connect(self) -> bool:
-        """Base connect method"""
         raise NotImplementedError
 
     async def execute(self, action: str, params: Dict[str, Any]) -> Dict[str, Any]:
-        """Base execute method"""
         raise NotImplementedError
 
     def _validate_config(self, config: Dict[str, Any]) -> Dict[str, Any]:
-        """Validate configuration"""
         required_fields = ['base_url', 'auth_type']
         for field in required_fields:
             if field not in config:
@@ -62,7 +58,6 @@ class IoTDeviceIntegration(BaseIntegration):
             raise
 
     def _get_auth_headers(self) -> Dict[str, str]:
-        """Get authentication headers based on config"""
         if self.config['auth_type'] == 'bearer':
             return {'Authorization': f"Bearer {self.config['auth_token']}"}
         elif self.config['auth_type'] == 'api_key':
@@ -73,7 +68,7 @@ class IoTDeviceIntegration(BaseIntegration):
 class WeatherServiceIntegration(BaseIntegration):
     @CircuitBreaker(failure_threshold=3, reset_timeout=60)
     async def connect(self) -> bool:
-        return True  # API key validation yeterli
+        return True
 
     @CircuitBreaker(failure_threshold=3, reset_timeout=60)
     @RateLimiter(max_requests=50, time_window=60)

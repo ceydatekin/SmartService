@@ -5,7 +5,6 @@ package smart_service;
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
-// Model Status
 enum ModelStatus {
     DRAFT = 0;
     ACTIVE = 1;
@@ -13,14 +12,12 @@ enum ModelStatus {
     MAINTENANCE = 3;
 }
 
-// Integration Types
 enum IntegrationType {
     IOT_DEVICE = 0;
     WEATHER_SERVICE = 1;
     CUSTOM = 2;
 }
 
-// Configuration messages
 message ModelConfiguration {
     map<string, string> settings = 1;
     repeated string capabilities = 2;
@@ -34,7 +31,6 @@ message IntegrationConfig {
     map<string, string> settings = 4;
 }
 
-// Smart Model messages
 message SmartModel {
     string id = 1;
     string name = 2;
@@ -51,7 +47,6 @@ message SmartModel {
     string updated_at = 13;
 }
 
-// Feature messages
 message FeatureParameter {
     string name = 1;
     string type = 2;
@@ -76,7 +71,6 @@ message SmartFeature {
     string updated_at = 13;
 }
 
-// Request/Response messages
 message CreateModelRequest {
     string name = 1;
     string type = 2;
@@ -149,20 +143,16 @@ message DeleteFeatureRequest {
     string user_id = 2;
 }
 
-// Service definition
 service SmartService {
-    // Model operations
     rpc CreateModel (CreateModelRequest) returns (SmartModel);
     rpc UpdateModel (UpdateModelRequest) returns (SmartModel);
     rpc DeleteModel (DeleteModelRequest) returns (google.protobuf.Empty);
     rpc GetModel (GetModelRequest) returns (SmartModel);
     rpc SearchModels (SearchModelsRequest) returns (SearchModelsResponse);
 
-    // Feature operations
     rpc AddFeature (AddFeatureRequest) returns (SmartFeature);
     rpc UpdateFeature (UpdateFeatureRequest) returns (SmartFeature);
     rpc DeleteFeature (DeleteFeatureRequest) returns (google.protobuf.Empty);
 
-    // Status operations
     rpc GetModelStatus (GetModelStatusRequest) returns (ModelStatusResponse);
 }

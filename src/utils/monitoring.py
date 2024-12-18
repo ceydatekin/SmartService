@@ -23,7 +23,6 @@ REQUEST_LATENCY = Histogram(
 logger = logging.getLogger(__name__)
 
 def monitor(method_name: Optional[str] = None) -> Callable:
-    """Monitoring decorator for tracking metrics"""
     def decorator(func: Callable) -> Callable:
         @functools.wraps(func)
         async def async_wrapper(*args, **kwargs):
